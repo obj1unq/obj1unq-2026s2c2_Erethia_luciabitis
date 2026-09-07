@@ -1,9 +1,64 @@
 import rolando.*
+
 describe "Erethia" {
-    test "la mochila de Rolando" {
-      rolando.recoleccionDeArtefacto(espadaDelDestino)
-      rolando.recoleccionDeArtefacto(libroDeHechizos)
-      assert.throwsException({ rolando.recoleccionDeArtefacto(collarDivino) })
-      assert.equals([espadaDelDestino,libroDeHechizos], rolando.conocerArtefactos())
-    }
+  test "la mochila de Rolando" {
+    rolando.encontrar(espadaDelDestino)
+    rolando.encontrar(libroDeHechizos)
+    rolando.encontrar(collarDivino)
+    assert.equals([espadaDelDestino, libroDeHechizos], rolando.mochila())
+  }
+  
+  test "volver a casa" {
+    rolando.encontrar(espadaDelDestino)
+    rolando.encontrar(libroDeHechizos)
+    rolando.llegadaAlHogar()
+    rolando.encontrar(collarDivino)
+    rolando.llegadaAlHogar()
+    assert.equals(
+      [espadaDelDestino, libroDeHechizos, collarDivino],
+      castilloDePiedra.almacen()
+    )
+  }
+  
+  test "mis artefactos" {
+    castilloDePiedra.almacen([espadaDelDestino, collarDivino])
+    rolando.encontrar(armaduraDeAceroValyrio)
+    assert.equals(
+      [armaduraDeAceroValyrio, espadaDelDestino, collarDivino],
+      rolando.artefactosEnTotal()
+    )
+  }
+  
+  test "historial de encuentros" {
+    rolando.encontrar(espadaDelDestino)
+    rolando.encontrar(libroDeHechizos)
+    rolando.encontrar(collarDivino)
+    rolando.llegadaAlHogar()
+    rolando.encontrar(armaduraDeAceroValyrio)
+    rolando.encontrar(collarDivino)
+    assert.equals(
+      [
+        espadaDelDestino,
+        libroDeHechizos,
+        collarDivino,
+        armaduraDeAceroValyrio,
+        collarDivino
+      ],
+      rolando.encuentros()
+    )
+  }
+  
+  test "la batalla!!" {
+    rolando.capacidadDeMochi(3)
+    rolando.poderBase(5)
+    rolando.mochila([espadaDelDestino, armaduraDeAceroValyrio, collarDivino])
+    assert.equals(19, rolando.poderDeBatalla())
+  }
+  
+  test "muchas batallas" {
+    rolando.capacidadDeMochi(3)
+    rolando.poderBase(5)
+    rolando.mochila([espadaDelDestino, armaduraDeAceroValyrio, collarDivino])
+    
+  }
 }
