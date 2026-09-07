@@ -1,3 +1,9 @@
 import rolando.*
 describe "Erethia" {
+    test "la mochila de Rolando" {
+      rolando.recoleccionDeArtefacto(espadaDelDestino)
+      rolando.recoleccionDeArtefacto(libroDeHechizos)
+      assert.throwsException({ rolando.recoleccionDeArtefacto(collarDivino) })
+      assert.equals([espadaDelDestino,libroDeHechizos], rolando.conocerArtefactos())
+    }
 }
