@@ -50,10 +50,6 @@ object mochila {
   }
   
   method artefactos() = artefactos
-
-  method artefactos(_artefactos){
-    artefactos.addAll(_artefactos)
-  }
   
   method limpiar() {
     artefactos.clear()
@@ -75,11 +71,15 @@ object mochila {
 object castilloDePiedra {
   const almacen = #{}
   
-  method almacen(artefactos) {
-    almacen.addAll(artefactos)
-  }
-  
   method almacen() = almacen
+  
+  method artefactoMasPoderoso(personaje) = almacen.map(
+    { artefacto => artefacto.poderAportado(personaje) }
+  ).max()
+  
+  method agregarArtefactos(_artefactos) {
+    almacen.addAll(_artefactos)
+  }
 } //artefactos
 
 object espadaDelDestino {
@@ -96,35 +96,32 @@ object espadaDelDestino {
 object libroDeHechizos {
   const hechizos = []
 
-  method poderAportado(personaje){
+  method agregarHechizos(_hechizos) {
     
   }
+  
+  method poderAportado(personaje) = if (hechizos.isEmpty()) 0
+                                    else hechizos.first().poder(personaje)
 
-  method usarHechizo(hechizo) {
-    hechizos.add(hechizo)
-    hechizos.remove(hechizo)
-  }
-
-  method hechizos(_hechizos) {
-    hechizos.addAll(_hechizos)
+  method usar() {  
+    if (! hechizos.isEmpty()) hechizos.remove(hechizos.first())
   }
 
 }
 
 object bendición {
   const poder = 4
-
-  method name() {
-    
-  }
+  
+  method poder(personaje) = poder
 }
+
 object invisibilidad {
-  
-}
-object invocación {
-  
+  method poder(personaje) = personaje.poderBase()
 }
 
+object invocación {
+  method poder(personaje) = castilloDePiedra.artefactoMasPoderoso(personaje)
+}
 
 object collarDivino {
   var puntos = 3

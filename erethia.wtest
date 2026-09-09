@@ -78,5 +78,14 @@ describe "Erethia" {
     assert.equals(6, collarDivino.poderAportado(rolando))
     assert.equals(8, rolando.poderBase())
   }
-  
+  test "libro de hechizardos" {
+    libroDeHechizos.hechizos.addAll([bendición,invisibilidad,invocación])
+    rolando.poderBase(5)
+    castilloDePiedra.almacen.addAll(#{espadaDelDestino,armaduraDeAceroValyrio,collarDivino})
+    mochila.artefactos.add(libroDeHechizos)
+    assert.equals(4, libroDeHechizos.poderAportado(rolando))
+    rolando.batalla()
+    assert.equals(6, libroDeHechizos.poderAportado(rolando))
+
+  }
 }
