@@ -5,7 +5,7 @@ describe "Erethia" {
     rolando.encontrar(espadaDelDestino)
     rolando.encontrar(libroDeHechizos)
     rolando.encontrar(collarDivino)
-    assert.equals([espadaDelDestino, libroDeHechizos], rolando.mochila())
+    assert.equals(#{espadaDelDestino, libroDeHechizos}, mochila.artefactos())
   }
   
   test "volver a casa" {
@@ -15,7 +15,7 @@ describe "Erethia" {
     rolando.encontrar(collarDivino)
     rolando.llegadaAlHogar()
     assert.equals(
-      [espadaDelDestino, libroDeHechizos, collarDivino],
+      #{espadaDelDestino, libroDeHechizos, collarDivino},
       castilloDePiedra.almacen()
     )
   }
@@ -24,7 +24,7 @@ describe "Erethia" {
     castilloDePiedra.almacen([espadaDelDestino, collarDivino])
     rolando.encontrar(armaduraDeAceroValyrio)
     assert.equals(
-      [armaduraDeAceroValyrio, espadaDelDestino, collarDivino],
+      #{armaduraDeAceroValyrio, espadaDelDestino, collarDivino},
       rolando.artefactosEnTotal()
     )
   }
@@ -37,7 +37,7 @@ describe "Erethia" {
     rolando.encontrar(armaduraDeAceroValyrio)
     rolando.encontrar(collarDivino)
     assert.equals(
-      [
+      [   
         espadaDelDestino,
         libroDeHechizos,
         collarDivino,
@@ -49,16 +49,34 @@ describe "Erethia" {
   }
   
   test "la batalla!!" {
-    rolando.capacidadDeMochi(3)
+    mochila.capacidadDeMochi(3)
     rolando.poderBase(5)
-    rolando.mochila([espadaDelDestino, armaduraDeAceroValyrio, collarDivino])
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
     assert.equals(19, rolando.poderDeBatalla())
   }
   
   test "muchas batallas" {
-    rolando.capacidadDeMochi(3)
+    mochila.capacidadDeMochi(3)
     rolando.poderBase(5)
-    rolando.mochila([espadaDelDestino, armaduraDeAceroValyrio, collarDivino])
-    
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.equals(5, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(3, collarDivino.poderAportado(rolando))
+    rolando.batalla()
+    assert.equals(3, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(3, collarDivino.poderAportado(rolando))
+    assert.equals(6, rolando.poderBase())
+    rolando.batalla()
+    assert.equals(3.5, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(5, collarDivino.poderAportado(rolando))
+    assert.equals(7, rolando.poderBase())
+    rolando.batalla()
+    assert.equals(4, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(6, collarDivino.poderAportado(rolando))
+    assert.equals(8, rolando.poderBase())
   }
+  
 }

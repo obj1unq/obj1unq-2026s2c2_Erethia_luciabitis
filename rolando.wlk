@@ -1,7 +1,5 @@
 //rolando
 object rolando {
-  var mochila = []
-  var capacidadDeMochi = 2
   var encuentros = []
   var poderBase = 0
   var cantidadDeBatallas = 0
@@ -14,59 +12,75 @@ object rolando {
   
   method poderPotenciado(_poder) = poderBase + _poder
   
+  method encuentros() = encuentros
+  
+  method encontrar(artefacto) {
+    encuentros += [artefacto]
+    mochila.rolandoEncuentra(artefacto)
+  }
+  
+  method llegadaAlHogar() {
+    castilloDePiedra.almacen(mochila.artefactos())
+    mochila.limpiar()
+  }
+  
+  method artefactosEnTotal() = mochila.artefactos() + castilloDePiedra.almacen()
+  
+  method poderDeBatalla() = poderBase + mochila.sumaDePoderes()
+  
+  method batalla() {
+    poderBase += 1
+    cantidadDeBatallas += 1
+    mochila.usarArtefactos()
+  }
+}
+
+object mochila {
+  const artefactos = #{}
+  var capacidadDeMochi = 2
+  
+  method rolandoEncuentra(artefacto) {
+    if (artefactos.size() < 2) artefactos.add(artefacto)
+  }
+  
   method capacidadDeMochi() = capacidadDeMochi
   
   method capacidadDeMochi(capacidad) {
     capacidadDeMochi = capacidad
   }
   
-  method encuentros() = encuentros
-  
-  method encontrar(artefacto) {
-    encuentros += [artefacto]
-    if (mochila.size() < 2) mochila.add(artefacto)
-  }
-  
-  method mochila() = mochila
+  method artefactos() = artefactos
 
-  method mochila(artefactos) {
-    mochila = artefactos
+  method artefactos(_artefactos){
+    artefactos.addAll(_artefactos)
   }
   
-  method llegadaAlHogar() {
-    castilloDePiedra.almacen(self.mochila())
-    mochila.clear()
+  method limpiar() {
+    artefactos.clear()
   }
   
-  method artefactosEnTotal() = mochila + castilloDePiedra.almacen()
-  
-  method tieneArtefacto(artefacto) {
-    mochila.contains(artefacto)
-  }
-  
-  method poderDeBatalla() = poderBase + mochila.sum(
-    { artefacto => artefacto.poderAportado(self) }
+  method sumaDePoderes() = artefactos.sum(
+    { artefacto => artefacto.poderAportado(rolando) }
   )
   
-  method batalla() {
-    cantidadDeBatallas += 1
-    mochila.forEach({ artefacto => artefacto.usar() })
+  method usarArtefactos() {
+    artefactos.forEach({ artefacto => artefacto.usar() })
   }
-} 
-
-//castillo
+  
+  method tieneArtefacto(artefacto) {
+    artefactos.contains(artefacto)
+  }
+} //castillo
 
 object castilloDePiedra {
-  const almacen = []
+  const almacen = #{}
   
   method almacen(artefactos) {
     almacen.addAll(artefactos)
   }
   
   method almacen() = almacen
-} 
-
-//artefactos
+} //artefactos
 
 object espadaDelDestino {
   var fueUsado = false
@@ -80,8 +94,37 @@ object espadaDelDestino {
 }
 
 object libroDeHechizos {
-  var poder = 500
+  const hechizos = []
+
+  method poderAportado(personaje){
+    
+  }
+
+  method usarHechizo(hechizo) {
+    hechizos.add(hechizo)
+    hechizos.remove(hechizo)
+  }
+
+  method hechizos(_hechizos) {
+    hechizos.addAll(_hechizos)
+  }
+
 }
+
+object bendición {
+  const poder = 4
+
+  method name() {
+    
+  }
+}
+object invisibilidad {
+  
+}
+object invocación {
+  
+}
+
 
 object collarDivino {
   var puntos = 3
@@ -95,16 +138,15 @@ object collarDivino {
   
   method poderAportado(personaje) = if (personaje.poderBase() > 6) puntos + usos
                                     else puntos
-  
 }
 
 object armaduraDeAceroValyrio {
   const poder = 6
   var usos = 0
-
+  
   method usar() {
-    usos = usos + 1
-  } 
+    usos += 1
+  }
   
   method poderAportado(personaje) = poder
 }
