@@ -21,7 +21,7 @@ describe "Erethia" {
   }
   
   test "mis artefactos" {
-    castilloDePiedra.almacen([espadaDelDestino, collarDivino])
+    castilloDePiedra.almacenArtefactos([espadaDelDestino, collarDivino])
     rolando.encontrar(armaduraDeAceroValyrio)
     assert.equals(
       #{armaduraDeAceroValyrio, espadaDelDestino, collarDivino},
@@ -79,13 +79,23 @@ describe "Erethia" {
     assert.equals(8, rolando.poderBase())
   }
   test "libro de hechizardos" {
-    libroDeHechizos.hechizos.addAll([bendición,invisibilidad,invocación])
+   libroDeHechizos.agregarHechizos([bendición,invisibilidad,invocación])
     rolando.poderBase(5)
-    castilloDePiedra.almacen.addAll(#{espadaDelDestino,armaduraDeAceroValyrio,collarDivino})
-    mochila.artefactos.add(libroDeHechizos)
+    castilloDePiedra.agregarArtefactos(#{espadaDelDestino,armaduraDeAceroValyrio,collarDivino})
+    mochila.rolandoEncuentra(libroDeHechizos)
     assert.equals(4, libroDeHechizos.poderAportado(rolando))
+    assert.equals(bendición, libroDeHechizos.hechizoActual())
     rolando.batalla()
     assert.equals(6, libroDeHechizos.poderAportado(rolando))
-
+    assert.equals(invisibilidad, libroDeHechizos.hechizoActual())
+    rolando.batalla()
+    assert.equals(7, libroDeHechizos.poderAportado(rolando))
+    assert.equals(invocación, libroDeHechizos.hechizoActual())
+    rolando.batalla()
+    assert.equals(0, libroDeHechizos.poderAportado(rolando))
+  }
+  test "enemigos" {
+    enemigos.enemigos(#{caterina,astra,archibaldo})
+     rolando.poderBase(5)
   }
 }

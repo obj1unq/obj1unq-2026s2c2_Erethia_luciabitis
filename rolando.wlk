@@ -1,6 +1,6 @@
 //rolando
 object rolando {
-  var encuentros = []
+  const encuentros = []
   var poderBase = 0
   var cantidadDeBatallas = 0
   
@@ -20,11 +20,13 @@ object rolando {
   }
   
   method llegadaAlHogar() {
-    castilloDePiedra.almacen(mochila.artefactos())
+    castilloDePiedra.almacenArtefactos(mochila.artefactos())
     mochila.limpiar()
   }
   
-  method artefactosEnTotal() = mochila.artefactos() + castilloDePiedra.almacen()
+  method artefactosEnTotal() = mochila.artefactos().union(
+    castilloDePiedra.almacen()
+  )
   
   method poderDeBatalla() = poderBase + mochila.sumaDePoderes()
   
@@ -33,6 +35,10 @@ object rolando {
     cantidadDeBatallas += 1
     mochila.usarArtefactos()
   }
+  
+  method enemigosVencibles() = enemigos.batalla(self)
+  
+  method moradasConquistables() = enemigos.batallaPorMoradas(self)
 }
 
 object mochila {
@@ -40,7 +46,7 @@ object mochila {
   var capacidadDeMochi = 2
   
   method rolandoEncuentra(artefacto) {
-    if (artefactos.size() < 2) artefactos.add(artefacto)
+    if (artefactos.size() < capacidadDeMochi) artefactos.add(artefacto)
   }
   
   method capacidadDeMochi() = capacidadDeMochi
@@ -50,6 +56,10 @@ object mochila {
   }
   
   method artefactos() = artefactos
+  
+  method artefactos(_artefactos) {
+    artefactos.addAll(_artefactos)
+  }
   
   method limpiar() {
     artefactos.clear()
@@ -73,6 +83,10 @@ object castilloDePiedra {
   
   method almacen() = almacen
   
+  method almacenArtefactos(artefactos) {
+    almacen.addAll(artefactos)
+  }
+  
   method artefactoMasPoderoso(personaje) = almacen.map(
     { artefacto => artefacto.poderAportado(personaje) }
   ).max()
@@ -95,18 +109,19 @@ object espadaDelDestino {
 
 object libroDeHechizos {
   const hechizos = []
-
+  
   method agregarHechizos(_hechizos) {
-    
+    hechizos.addAll(_hechizos)
   }
+  
+  method hechizoActual() = hechizos.first()
   
   method poderAportado(personaje) = if (hechizos.isEmpty()) 0
                                     else hechizos.first().poder(personaje)
-
-  method usar() {  
-    if (! hechizos.isEmpty()) hechizos.remove(hechizos.first())
+  
+  method usar() {
+    if (!hechizos.isEmpty()) hechizos.remove(hechizos.first())
   }
-
 }
 
 object bendición {
@@ -124,7 +139,7 @@ object invocación {
 }
 
 object collarDivino {
-  var puntos = 3
+  const puntos = 3
   var usos = 0
   
   method puntos() = puntos
@@ -146,4 +161,60 @@ object armaduraDeAceroValyrio {
   }
   
   method poderAportado(personaje) = poder
+} //enemigos!
+
+object enemigos {
+  const enemigos = #{}
+  const moradasDeEnemigos = #{}
+  
+  method enemigos(_enemigos) {
+    enemigos.addAll(_enemigos)
+  }
+  
+  method moradasDeEnemigos(moradas) {
+    moradasDeEnemigos.addAll(moradas)
+  }
+  
+  method batalla(personaje) = enemigos.filter(
+    { enemigo => enemigo.puedeSerVencidoPor(personaje) }
+  )
+  
+  method batallaPorMoradas(personaje) = moradasDeEnemigos.filter(
+    { morada => morada.moradaConquistada(personaje) }
+  )
+}
+
+object caterina {
+  const poder = 28
+  const morada = fortalezaDeAcero
+  
+  method puedeSerVencidoPor(personaje) = personaje.poderDeBatalla() > poder
+}
+
+object archibaldo {
+  const poder = 16
+  const morada = palacioDeMármol
+  
+  method puedeSerVencidoPor(personaje) = personaje.poderDeBatalla() > poder
+}
+
+object astra {
+  const poder = 14
+  const morada = torreDeMarfil
+  
+  method morada() = torreDeMarfil
+  
+  method puedeSerVencidoPor(personaje) = personaje.poderDeBatalla() > poder
+} //lugares enemigos
+
+object fortalezaDeAcero {
+  method moradaConquistada(personaje) = caterina.puedeSerVencidoPor(personaje)
+}
+
+object palacioDeMármol {
+  method moradaConquistada(personaje) = archibaldo.puedeSerVencidoPor(personaje)
+}
+
+object torreDeMarfil {
+  method moradaConquistada(personaje) = astra.puedeSerVencidoPor(personaje)
 }
