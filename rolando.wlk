@@ -1,6 +1,6 @@
 //rolando
 object rolando {
-  const encuentros = []
+  var encuentros = []
   var poderBase = 0
   var cantidadDeBatallas = 0
   
@@ -39,6 +39,14 @@ object rolando {
   method enemigosVencibles() = enemigos.batalla(self)
   
   method moradasConquistables() = enemigos.batallaPorMoradas(self)
+  
+  method todoPoderoso() = enemigos.enemigos().all(
+    { enemigo => enemigo.puedeSerVencidoPor(self) }
+  )
+  
+  method tieneElArtefactoFatalContra(enemigo) = mochila.hayUnArtefactoFatal(enemigo)
+
+  method elArtefactoFatalContra(enemigo) = mochila.existeArtefactoFatalContra(enemigo)
 }
 
 object mochila {
@@ -76,6 +84,14 @@ object mochila {
   method tieneArtefacto(artefacto) {
     artefactos.contains(artefacto)
   }
+  
+  method hayUnArtefactoFatal(enemigo) = artefactos.any(
+    { artefacto => artefacto.poderAportado(rolando) > enemigo.poder() }
+  )
+  
+  method existeArtefactoFatalContra(enemigo) = artefactos.find(
+    { artefacto => artefacto.poderAportado(rolando) > enemigo.poder() }
+  )
 } //castillo
 
 object castilloDePiedra {
@@ -164,29 +180,30 @@ object armaduraDeAceroValyrio {
 } //enemigos!
 
 object enemigos {
-  const enemigos = #{}
-  const moradasDeEnemigos = #{}
+  const enemigosDeRolando = #{}
   
   method enemigos(_enemigos) {
-    enemigos.addAll(_enemigos)
+    enemigosDeRolando.addAll(_enemigos)
   }
   
-  method moradasDeEnemigos(moradas) {
-    moradasDeEnemigos.addAll(moradas)
-  }
+  method enemigos() = enemigosDeRolando
   
-  method batalla(personaje) = enemigos.filter(
+  method batalla(personaje) = enemigosDeRolando.filter(
     { enemigo => enemigo.puedeSerVencidoPor(personaje) }
   )
   
-  method batallaPorMoradas(personaje) = moradasDeEnemigos.filter(
-    { morada => morada.moradaConquistada(personaje) }
+  method batallaPorMoradas(personaje) = self.batalla(personaje).map(
+    { enemigo => enemigo.morada() }
   )
 }
 
 object caterina {
   const poder = 28
   const morada = fortalezaDeAcero
+  
+  method poder() = poder
+  
+  method morada() = morada
   
   method puedeSerVencidoPor(personaje) = personaje.poderDeBatalla() > poder
 }
@@ -195,6 +212,10 @@ object archibaldo {
   const poder = 16
   const morada = palacioDeMármol
   
+  method poder() = poder
+  
+  method morada() = morada
+  
   method puedeSerVencidoPor(personaje) = personaje.poderDeBatalla() > poder
 }
 
@@ -202,7 +223,9 @@ object astra {
   const poder = 14
   const morada = torreDeMarfil
   
-  method morada() = torreDeMarfil
+  method poder() = poder
+  
+  method morada() = morada
   
   method puedeSerVencidoPor(personaje) = personaje.poderDeBatalla() > poder
 } //lugares enemigos

@@ -78,7 +78,7 @@ describe "Erethia" {
     assert.equals(6, collarDivino.poderAportado(rolando))
     assert.equals(8, rolando.poderBase())
   }
-  test "libro de hechizardos" {
+  test "libro de hechizos" {
    libroDeHechizos.agregarHechizos([bendición,invisibilidad,invocación])
     rolando.poderBase(5)
     castilloDePiedra.agregarArtefactos(#{espadaDelDestino,armaduraDeAceroValyrio,collarDivino})
@@ -96,6 +96,27 @@ describe "Erethia" {
   }
   test "enemigos" {
     enemigos.enemigos(#{caterina,astra,archibaldo})
-     rolando.poderBase(5)
+    rolando.poderBase(5)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.equals(19, rolando.poderDeBatalla())
+    assert.equals(#{astra,archibaldo}, rolando.enemigosVencibles())
+    assert.equals([torreDeMarfil, palacioDeMármol], rolando.moradasConquistables())
+  }
+  test "el mas poderoso en todo erethia" {
+    enemigos.enemigos(#{caterina,astra,archibaldo})
+    rolando.poderBase(10)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.that(rolando.todoPoderoso())
+  }
+  test "el artefacto fatal" {
+     enemigos.enemigos(#{caterina,astra,archibaldo})
+    rolando.poderBase(15)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.that(rolando.tieneElArtefactoFatalContra(astra))
+    assert.equals(espadaDelDestino, rolando.elArtefactoFatalContra(astra))
+    assert.notThat(rolando.tieneElArtefactoFatalContra(caterina))
   }
 }
