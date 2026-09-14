@@ -1,3 +1,132 @@
 import rolando.*
+import erethia.*
+import artefactos.*
+
+
 describe "Erethia" {
+  test "la mochila de Rolando" {
+    rolando.encontrar(espadaDelDestino)
+    rolando.encontrar(libroDeHechizos)
+    rolando.encontrar(collarDivino)
+    assert.equals(#{espadaDelDestino, libroDeHechizos}, mochila.artefactos())
+  }
+  
+  test "volver a casa" {
+    rolando.encontrar(espadaDelDestino)
+    rolando.encontrar(libroDeHechizos)
+    rolando.llegadaAlHogar()
+    rolando.encontrar(collarDivino)
+    rolando.llegadaAlHogar()
+    assert.equals(
+      #{espadaDelDestino, libroDeHechizos, collarDivino},
+      castilloDePiedra.almacen()
+    )
+  }
+  
+  test "mis artefactos" {
+    castilloDePiedra.almacenArtefactos([espadaDelDestino, collarDivino])
+    rolando.encontrar(armaduraDeAceroValyrio)
+    assert.equals(
+      #{armaduraDeAceroValyrio, espadaDelDestino, collarDivino},
+      rolando.artefactosEnTotal()
+    )
+  }
+  
+  test "historial de encuentros" {
+    rolando.encontrar(espadaDelDestino)
+    rolando.encontrar(libroDeHechizos)
+    rolando.encontrar(collarDivino)
+    rolando.llegadaAlHogar()
+    rolando.encontrar(armaduraDeAceroValyrio)
+    rolando.encontrar(collarDivino)
+    assert.equals(
+      [   
+        espadaDelDestino,
+        libroDeHechizos,
+        collarDivino,
+        armaduraDeAceroValyrio,
+        collarDivino
+      ],
+      rolando.encuentros()
+    )
+  }
+  
+  test "la batalla!!" {
+    mochila.capacidadDeMochi(3)
+    rolando.poderBase(5)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.equals(19, rolando.poderDeBatalla())
+  }
+  
+  test "muchas batallas" {
+    mochila.capacidadDeMochi(3)
+    rolando.poderBase(5)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.equals(5, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(3, collarDivino.poderAportado(rolando))
+    rolando.batalla()
+    assert.equals(3, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(3, collarDivino.poderAportado(rolando))
+    assert.equals(6, rolando.poderBase())
+    rolando.batalla()
+    assert.equals(3.5, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(5, collarDivino.poderAportado(rolando))
+    assert.equals(7, rolando.poderBase())
+    rolando.batalla()
+    assert.equals(4, espadaDelDestino.poderAportado(rolando))
+    assert.equals(6, armaduraDeAceroValyrio.poderAportado(rolando))
+    assert.equals(6, collarDivino.poderAportado(rolando))
+    assert.equals(8, rolando.poderBase())
+  }
+  test "libro de hechizos" {
+   libroDeHechizos.agregarHechizos([bendición,invisibilidad,invocación])
+    rolando.poderBase(5)
+    castilloDePiedra.agregarArtefactos(#{espadaDelDestino,armaduraDeAceroValyrio,collarDivino})
+    mochila.rolandoEncuentra(libroDeHechizos)
+    assert.equals(4, libroDeHechizos.poderAportado(rolando))
+    assert.equals(bendición, libroDeHechizos.hechizoActual())
+    rolando.batalla()
+    assert.equals(6, libroDeHechizos.poderAportado(rolando))
+    assert.equals(invisibilidad, libroDeHechizos.hechizoActual())
+    rolando.batalla()
+    assert.equals(7, libroDeHechizos.poderAportado(rolando))
+    assert.equals(invocación, libroDeHechizos.hechizoActual())
+    rolando.batalla()
+    assert.equals(0, libroDeHechizos.poderAportado(rolando))
+  }
+  test "enemigos" {
+    erethia.enemigos(#{caterina,astra,archibaldo})
+    rolando.poderBase(5)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.equals(19, rolando.poderDeBatalla())
+    assert.equals(#{astra,archibaldo}, rolando.enemigosVencibles())
+    assert.equals([torreDeMarfil, palacioDeMármol], rolando.moradasConquistables())
+  }
+  test "el mas poderoso en todo erethia" {
+    erethia.enemigos(#{caterina,astra,archibaldo})
+    rolando.poderBase(10)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.that(erethia.todoPoderoso(rolando))
+  }
+  test "no era tan poderoso" {
+     erethia.enemigos(#{caterina,astra,archibaldo})
+    rolando.poderBase(3)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.notThat(erethia.todoPoderoso(rolando))
+  }
+  test "el artefacto fatal" {
+     erethia.enemigos(#{caterina,astra,archibaldo})
+    rolando.poderBase(15)
+    mochila.capacidadDeMochi(3)
+    mochila.artefactos(#{espadaDelDestino, armaduraDeAceroValyrio, collarDivino})
+    assert.that(rolando.tieneElArtefactoFatalContra(astra))
+    assert.equals(espadaDelDestino, rolando.elArtefactoFatalContra(astra))
+    assert.notThat(rolando.tieneElArtefactoFatalContra(caterina))
+  }
 }
